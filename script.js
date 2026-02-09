@@ -157,31 +157,30 @@ async function updateUpcomingBatch() {
         return;
     }
 
-    // ************* DEVOPS SPECIFIC FILTER *************
-    // Database madhun fakt 'devops' course sho dhuya
-    const devopsCourse = courses.find(c => c.course_name === 'devops');
+    // Filter logic with extra safety
+    const devopsCourse = courses.find(c => 
+      c.course_name && c.course_name.toLowerCase() === 'devops'
+    );
     
     if (!devopsCourse) {
         console.warn("DevOps course data not found in DB.");
         return;
     }
-    // *************************************************
 
     const courseInfo = document.querySelector("#courses .course-info");
     
-    if (courseInfo && devopsCourse) {
+    if (courseInfo) {
       const spans = courseInfo.querySelectorAll("span");
       
       if (spans.length >= 2) {
-        // Start Date अपडेट करा (DevOps chi)
+        // formatDisplayDate function tujhya code madhe aadhi pasun aahech
         const startDate = devopsCourse.start_date ? formatDisplayDate(devopsCourse.start_date) : "TBA";
         spans[0].innerHTML = `📅 New Batch Starting On : ${startDate}`;
         
-        // Duration अपडेट करा (DevOps chi)
         const durationText = devopsCourse.duration ? devopsCourse.duration : "4 Months";
         spans[1].innerHTML = `⏱ Duration: ${durationText}`;
         
-        console.log("DevOps Batch Data Updated:", devopsCourse);
+        console.log("DevOps UI Updated Successfully.");
       }
     }
   } catch (err) {
