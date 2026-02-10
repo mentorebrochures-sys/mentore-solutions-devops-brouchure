@@ -149,42 +149,25 @@ function formatDisplayDate(dateStr) {
  */
 async function updateUpcomingBatch() {
   try {
-    const res = await fetch(COURSE_API);
-    const courses = await res.json();
+    // Direct 'devops' cha data magva
+    const res = await fetch(`${COURSE_API}/devops`); 
+    const course = await res.json();
     
-    if (!courses || !Array.isArray(courses) || courses.length === 0) {
-        console.warn("No course data available.");
-        return;
-    }
-
-    // Filter logic with extra safety
-    const devopsCourse = courses.find(c => 
-      c.course_name && c.course_name.toLowerCase() === 'devops'
-    );
-    
-    if (!devopsCourse) {
-        console.warn("DevOps course data not found in DB.");
+    if (!course || course.error) {
+        console.warn("DevOps course data not found.");
         return;
     }
 
     const courseInfo = document.querySelector("#courses .course-info");
-    
     if (courseInfo) {
       const spans = courseInfo.querySelectorAll("span");
-      
       if (spans.length >= 2) {
-        // formatDisplayDate function tujhya code madhe aadhi pasun aahech
-        const startDate = devopsCourse.start_date ? formatDisplayDate(devopsCourse.start_date) : "TBA";
-        spans[0].innerHTML = `📅 New Batch Starting On : ${startDate}`;
-        
-        const durationText = devopsCourse.duration ? devopsCourse.duration : "4 Months";
-        spans[1].innerHTML = `⏱ Duration: ${durationText}`;
-        
-        console.log("DevOps UI Updated Successfully.");
+        spans[0].innerHTML = `📅 New Batch Starting On : ${formatDisplayDate(course.start_date)}`;
+        spans[1].innerHTML = `⏱ Duration: ${course.duration}`;
       }
     }
   } catch (err) {
-    console.error("Failed to load upcoming batch info:", err);
+    console.error("DevOps update error:", err);
   }
 }
 
